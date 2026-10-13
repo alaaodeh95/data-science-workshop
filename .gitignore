@@ -1,0 +1,13 @@
+# Instructor-only material (kept out of the public repo)
+solutions/
+tools/
+
+# Python / Jupyter
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/
+venv/
+
+# Session 2 outputs
+data/gold_*.parquet
