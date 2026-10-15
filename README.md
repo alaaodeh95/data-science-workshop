@@ -5,8 +5,8 @@ Two 60-minute, practical sessions built around one story. **ShopSmart** (a ficti
 | | Session 1: Understanding & Cleaning | Session 2: Analysis, Correlation & Anomalies |
 |---|---|---|
 | Notebook | `Session1_Understanding_and_Cleaning.ipynb` | `Session2_Analysis_Correlation_Anomalies.ipynb` |
-| Topics | What data is, reading CSV/Excel/JSON/Parquet, data types, data-quality dimensions, duplicates, type fixing, consistency, business rules, cross-field checks, missing values (MCAR/MAR/MNAR) | EDA, skew, groupby/pivot, time series, Pearson vs Spearman, correlation pitfalls & causation, z-score/robust z/IQR, contextual anomalies, Isolation Forest, pipelines, validation, bronze/silver/gold, feature engineering (RFM), feature scaling / normalization (min-max, standard, robust, log) |
-| Output | `data/orders_clean.parquet` | `data/gold_orders.parquet`, `data/gold_customers.parquet` |
+| Topics | What data is, reading CSV/Excel/JSON/Parquet, data types, data-quality dimensions, duplicates, type fixing, consistency, business rules, cross-field checks, missing values (MCAR/MAR/MNAR) | EDA, skew, groupby/pivot, time series, Pearson vs Spearman, correlation pitfalls & causation, z-score/robust z/IQR, contextual anomalies, Isolation Forest, pipelines, validation, bronze/silver/gold, model-ready data: one-hot encoding, feature scaling / normalization, linear regression |
+| Output | `data/orders_clean.parquet` | `data/gold_orders.parquet` |
 
 ## 📁 Structure
 ```
