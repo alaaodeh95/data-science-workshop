@@ -2,6 +2,9 @@
 
 Two 60-minute, practical sessions built around one story. **ShopSmart** (a fictional online store) has a messy order export. Participants take it from raw data to clean data, then to insights and a reusable pipeline.
 
+Also included: **Session 3, From LSTMs to Transformers**, a standalone 60-minute
+notebook workshop on attention and next-token prediction (setup below).
+
 | | Session 1: Understanding & Cleaning | Session 2: Analysis, Correlation & Anomalies |
 |---|---|---|
 | Notebook | `Session1_Understanding_and_Cleaning.ipynb` | `Session2_Analysis_Correlation_Anomalies.ipynb` |
@@ -13,11 +16,58 @@ Two 60-minute, practical sessions built around one story. **ShopSmart** (a ficti
 DataScienceWorkshop/
 ├── Session1_Understanding_and_Cleaning.ipynb        ← participant notebook (blank exercises)
 ├── Session2_Analysis_Correlation_Anomalies.ipynb    ← participant notebook (blank exercises)
+├── Session3_From_LSTMs_to_Transformers.ipynb       ← runnable attention and generation experiments
 ├── solutions/                                       ← instructor versions (solutions + outputs, not published)
 ├── data/                                            ← datasets (generated)
 ├── generate_data.py                                 ← recreates the messy dataset (seeded, reproducible)
-└── requirements.txt
+├── requirements.txt
+└── requirements-transformers.txt                    ← standalone Session 3 dependencies
 ```
+
+## Session 3: From LSTMs to Transformers (60 minutes)
+
+Open [`Session3_From_LSTMs_to_Transformers.ipynb`](Session3_From_LSTMs_to_Transformers.ipynb).
+This standalone session assumes basic Python and a previous introduction to RNNs/LSTMs;
+it does not depend on Sessions 1 or 2. No GPU or training is required.
+
+| Minutes | Activity |
+|---|---|
+| 0-5 | Bridge from LSTMs |
+| 5-15 | Encoder/decoder roles and the context bottleneck |
+| 15-35 | Change a query, visualize attention, and try self-attention |
+| 35-45 | Transformer building blocks and a causal-mask experiment |
+| 45-55 | Inspect real next-token probabilities and generate step by step |
+| 55-60 | Recap and questions |
+
+### Session 3 setup - complete before the meeting
+
+Use Python 3.10+ in the virtual environment described below. Session 3 has its own
+requirements, so you do not need to install the data-analysis packages:
+
+```powershell
+python -m pip install -r requirements-transformers.txt
+python -c "from transformers import AutoTokenizer, AutoModelForCausalLM; m='distilbert/distilgpt2'; AutoTokenizer.from_pretrained(m); AutoModelForCausalLM.from_pretrained(m, use_safetensors=True); print('Model cached and ready')"
+jupyter lab Session3_From_LSTMs_to_Transformers.ipynb
+```
+
+The initial installation and public model download require internet access and
+several hundred MB of model storage, plus space for PyTorch. After this preparation,
+the notebook loads the cached model without network access. It runs on CPU.
+DistilGPT2 is a text-completion model, not an instruction-following chatbot; outputs
+may be inaccurate, biased, or inappropriate. Use only the supplied non-sensitive
+example prompts during the workshop.
+
+**Presenter preflight:** restart the kernel and run all cells before the meeting.
+If imports fail, install the requirements in the same Python environment as the
+notebook kernel. If cached model loading fails, rerun the download command above
+under the same user account and environment. Do not spend session time installing
+packages or downloading weights.
+
+**Delivery:** the notebook includes short presenter cues and four predict-then-run
+experiments. Change the query, inspect the self-attention heatmap, hide future
+positions, and change a real model's prompt. Hand-crafted attention vectors are
+explicitly distinguished from learned model behavior. If behind schedule, keep
+one prompt and omit the second prompt experiment; preserve the final recap.
 
 ## ⚙️ Setup (participants)
 You need **Python 3.10+** (https://www.python.org/downloads/; on Windows, tick **"Add python.exe to PATH"**) and **Git** (https://git-scm.com/downloads).
