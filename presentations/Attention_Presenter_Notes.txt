@@ -1,0 +1,140 @@
+ATTENTION & TRANSFORMERS - YOUR PRESENTER SCRIPT
+12 slides / 30 minutes including questions.
+Use this deck instead of the notebook today. The timing on each slide is a guide.
+
+SLIDE 1: Attention & Transformers
+[1 minutes]
+
+OPENING: "Today is about intuition, not equations. We will understand how tokens share information, what attention returns, and how a Transformer uses it."
+There is no notebook to operate during this presentation. Do not promise a live demo. You can present every concept from these slides.
+Road map: first context, then attention, then the Transformer. Tell the team they only need to remember: match, mix, update.
+Presenter reminder: you do not need to explain every learned feature. The model learns numeric transformations; our examples are deliberately illustrative.
+
+=================================================================
+
+SLIDE 2: Words need context
+[2 minutes]
+
+SAY: "If I only show you the word bank, you do not know which meaning I intend. Nearby words help."
+Read the two sentences. Ask which words are useful: river and deposited money.
+The point is not that attention alone solves word sense or that these are actual model outputs. These are conceptual examples.
+A token representation is a vector of numbers. Contextualizing it means updating that vector using information from other positions. We are not generating a new word yet.
+TRANSITION: "How can a model bring that useful information together?"
+
+=================================================================
+
+SLIDE 3: From carrying memory to reading context
+[2 minutes]
+
+SAY: "An LSTM carries and updates memory as it processes tokens. Its gates help retain information. Attention gives each position a direct way to combine information from other allowed positions."
+The diagrams show information routes, not measured model weights.
+Do not say LSTMs cannot remember. Their sequential dependency is the bridge to today's topic.
+In an encoder, positions can usually read both sides. A causal decoder has restrictions that we will show later.
+TRANSITION: "That lookup has three ingredients. Their names sound harder than the idea."
+
+=================================================================
+
+SLIDE 4: Query, key, value: think of a library
+[3 minutes]
+
+SAY: "Imagine choosing a recipe. Your query is a request: something warm for lunch. A key describes an item so it can be matched: soup, hot, lunch. The value is the actual information retrieved: the recipe content."
+Keys and values play different roles. Query and key determine how much; value determines what is contributed.
+In real attention all three are numeric vectors, not English descriptions. The analogy explains the roles, not the actual implementation.
+Ask: "Which do we compare with the query: the key or the value?" Answer: key.
+TRANSITION: "After matching, how do we combine information?"
+
+=================================================================
+
+SLIDE 5: Attention is a weighted blend
+[3 minutes]
+
+SAY: "The request is compared with the keys. Matching scores become proportions through softmax. Those proportions blend the value vectors."
+The weights on this slide are invented for teaching. They are not measured recipe-model output. All three sum to 100 percent.
+Read the bars: eighty percent of A's value, ten percent of B, ten percent of C. Attention normally creates a blend, not one hard winner.
+Do not call the value itself an attention weight. The weight is the mixing amount; the value is the content being mixed.
+Ask participants: "If B's weight increased, whose information would influence the result more?"
+TRANSITION: "Let's see what the output actually is."
+
+=================================================================
+
+SLIDE 6: The output is a vector, not a word
+[3 minutes]
+
+SAY: "These are toy values we chose, not real word embeddings. A supplies [10,0], B supplies [0,10], C supplies [5,5]."
+Calculate slowly: eighty percent of A is [8,0]. Ten percent of B is [0,1]. Ten percent of C is [0.5,0.5]. Sum them to get [8.5,1.5].
+This output is gathered information for the querying position. It is not a generated token and not a replacement value vector.
+V stays unchanged during the attention operation. The output goes through the rest of the block. The next layer receives updated representations and calculates its own Q, K and V.
+If questions get deep, return to "mix information to update a representation."
+
+=================================================================
+
+SLIDE 7: Where do Q, K and V come from?
+[3 minutes]
+
+SAY: "In the first layer, token embeddings plus position information give us the representations. Learned transformations turn those representations into queries, keys, and values."
+W_Q, W_K and W_V are learned matrices. Q, K and V are computed vectors. A key is not the same thing as the learned key matrix, and attention weights are yet another object: computed from Q and K.
+The model learns its matrices during training: predict, measure error, update weights, repeat. During today's pretrained inference, those learned matrices are fixed, but Q/K/V depend on the input.
+Later layers use the previous layer's contextual representations, not the original embedding again.
+Do not teach the matrix multiplications now. Just point to the three learned transformations.
+
+=================================================================
+
+SLIDE 8: Self-attention: who is allowed to read whom?
+[3 minutes]
+
+SAY: "In self-attention, queries, keys and values come from the same sequence. Each row in these pictures is the position asking; columns are the positions available to read."
+Point to the second row, love. An encoder can read I, love, learning and today. A causal decoder at love can only read I and love.
+The diagonal is allowed because that position predicts the following token. At love, the target is learning, not love.
+The model sets future attention scores to negative infinity before softmax, so their weights become zero. Gray squares mean not allowed, not merely small weights.
+These are access diagrams, not measured attention heatmaps.
+TRANSITION: "Now package this mechanism into a network."
+
+=================================================================
+
+SLIDE 9: A Transformer is more than attention
+[3 minutes]
+
+SAY: "Attention is the information-sharing operation. A Transformer is the larger architecture."
+Walk through the cards. Position tells the model about order. Multi-head attention combines multiple learned views. The feed-forward network transforms features at each position. Residual connections add an existing representation to an update; normalization helps regulate feature scales.
+Stacking blocks repeats these operations with different learned weights. The attention output is processed by the rest of its block before the next layer makes fresh Q/K/V.
+No equations needed. Heads are not manually assigned grammar roles.
+The cards describe roles, not an exact sequential ordering. Pre-norm and post-norm architectures arrange normalization differently.
+TRANSITION: "How are the blocks arranged to read or generate text?"
+
+=================================================================
+
+SLIDE 10: Encoder reads. Decoder generates.
+[2 minutes]
+
+SAY: "The encoder builds representations of an input, such as a sentence to translate. The decoder generates output tokens."
+Follow the left column down. Follow the right column down. The sideways arrow supplies encoder information to decoder cross-attention. The decoder's queries consult encoder keys and values.
+Encoder-only: BERT-like representations. Decoder-only: GPT-like generation, without a separate encoder or encoder cross-attention. Encoder-decoder: translation and similar input-to-output tasks.
+Explain roles only. This slide omits Add & Norm and repeated blocks intentionally. If asked, those are the components from the previous slide.
+Do not imply all encoders use recurrent bottlenecks or that GPT has a separate encoder.
+
+=================================================================
+
+SLIDE 11: Generation: predict, append, repeat
+[2 minutes]
+
+SAY: "Attention itself does not output a word. After all the blocks, a vocabulary projection creates scores. Softmax turns those scores into probabilities. A decoding rule chooses a token."
+All probabilities here are illustrative. They do not come from a real model run. Coffee has forty percent, tea twenty-five percent, the remaining vocabulary together thirty-five percent.
+Choose coffee, append it to I like, then predict another token using I like coffee. It is a token, not necessarily a whole word.
+Training can process many known positions in parallel. Generating new text still proceeds token by token.
+Fluent text is not a guarantee of factual accuracy. Do not promise the capital-of-France example will answer Paris.
+
+=================================================================
+
+SLIDE 12: You only need three ideas
+[3 minutes]
+
+Spend the last three minutes on recap and questions.
+SAY: "Attention matches queries with keys, then mixes values. Its output is a contextual vector, not a word. A Transformer organizes that operation into blocks that can support input representations or text generation."
+Ask the room: "What is mixed, keys or values?" Values.
+"Does the attention output directly become a generated word?" No.
+"Why hide future tokens?" To prevent looking at the target while predicting it.
+If someone asks how vectors get meaning, say training learns transformations useful for reducing prediction error; dimensions do not necessarily have human-readable labels.
+If someone asks what the next layer receives, say updated token representations after the entire preceding block, not a raw new V.
+Optional further reading after class: Attention Is All You Need, https://arxiv.org/abs/1706.03762 ; The Illustrated Transformer, https://jalammar.github.io/illustrated-transformer/ . All slide illustrations are original; numerical examples are illustrative.
+
+=================================================================

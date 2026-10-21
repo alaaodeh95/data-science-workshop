@@ -26,6 +26,14 @@ DataScienceWorkshop/
 
 ## Session 3: From LSTMs to Transformers (60 minutes)
 
+**Shorter, slide-only version:** [Attention & Transformers: The Simple Version](presentations/Attention_and_Transformers_Simple_30min.pptx)
+is a 12-slide, 30-minute introduction including questions. Every slide has speaker
+notes and a time budget; no live code is required. A
+[PDF fallback](presentations/Attention_and_Transformers_Simple_30min.pdf) and
+[plain-text presenter script](presentations/Attention_Presenter_Notes.txt) are included.
+The slides use a separate, clearly labeled toy example to distinguish values,
+attention weights, and attention outputs.
+
 Open [`Session3_From_LSTMs_to_Transformers.ipynb`](Session3_From_LSTMs_to_Transformers.ipynb).
 This standalone session assumes basic Python and a previous introduction to RNNs/LSTMs;
 it does not depend on Sessions 1 or 2. No GPU or training is required.
