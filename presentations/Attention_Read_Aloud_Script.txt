@@ -1,0 +1,163 @@
+SLIDE 1: 1. Attention helps a word use its context
+
+Today I want to explain attention without starting with an equation. Last time we learned about RNNs and LSTMs. Those models carry a memory through a sequence. Attention gives a position a way to gather information directly from other positions.
+
+Look at these two sentences: we sat on the river bank, and I put money in the bank. The word bank is the same. The useful surrounding information is different. Which words help us choose the meaning? River in the first sentence, and money in the second.
+
+That is our starting idea. A model needs to use context, not just look at a word in isolation. Attention is one way to combine useful context. It does not understand language by magic, and it does not always get the answer right. We are going to follow the information step by step.
+
+==============================================================
+
+SLIDE 2: 2. An embedding represents a token with numbers
+
+Before we can combine words, the model needs a numerical representation of them. We usually split text into tokens. A token can be a word, part of a word, or punctuation. To keep our pictures simple, we will draw whole words.
+
+An embedding is a list of numbers associated with a token. On this slide, river is represented by a short example list. These numbers are invented to make the picture easy. Real embeddings usually contain many more numbers, and their components do not come with simple English labels.
+
+Position information tells the model where a token occurs. This matters because dog bites man is different from man bites dog. In the first layer of the architecture we are discussing, embeddings and position information form the starting representations.
+
+After a layer uses context, the representation can change. It is no longer only the original token embedding.
+
+==============================================================
+
+SLIDE 3: 3. A query is the vector used to look for a match
+
+The first attention term is query. A query is a numerical vector used to match information at other positions. It is calculated from the current representation of the position we are updating.
+
+Imagine updating the position bank. We can describe the purpose in everyday language as: which surrounding information would help here? That sentence is our explanation, not a literal question inside the model.
+
+The model does not store the English request shown on this slide. It computes a vector through a learned transformation. That vector will be compared with other vectors.
+
+For now, keep one simple distinction: the query belongs to the position doing the looking. It does not contain the final answer, and it is not a new word the model has generated. It starts a matching calculation. Next we need something to compare it with.
+
+==============================================================
+
+SLIDE 4: 4. A key is the vector used to be matched
+
+A key is the other side of the match. Each available position provides a key vector. The query is compared with those keys to produce matching scores.
+
+Think of a key as a searchable description. If I am looking for a book, the description helps me decide whether the book looks relevant. The description is not the whole book.
+
+In the sentence we sat on the river bank, bank has a query. River and sat have keys. Matching them gives scores. This slide shows the steps, not real model measurements. The model does not literally attach labels such as water or finance to its keys.
+
+A key is calculated from a token representation using a learned transformation. So query and key are both computed vectors. The matching scores tell us how strongly they match. We still have not mixed any content.
+
+==============================================================
+
+SLIDE 5: 5. Attention weights are mixing percentages
+
+Now we convert the matching scores into proportions. The operation that does this is called softmax. You do not need its equation today. Its job here is to turn the scores into positive weights that add up to one, or one hundred percent.
+
+Here is a made-up example. One position gets eighty percent and another gets twenty percent. That means the result will contain much more information from the first position, but it still includes information from the second.
+
+The attention weight is only the mixing amount. It is not the content being mixed, and it is not a probability that our interpretation is true. Eighty percent attention does not mean the model is eighty percent certain about the meaning of bank.
+
+So far our story is: query and keys produce scores, and scores produce mixing percentages. What do those percentages actually multiply? They multiply the values.
+
+==============================================================
+
+SLIDE 6: 6. A value is the information being mixed
+
+The value is the actual numerical information a position contributes. The key helps decide how much to take. The value supplies what gets taken.
+
+Let us stop talking about words for a moment and use two tiny numerical values. We choose A to be ten, zero, and B to be zero, ten. These are invented vectors, not learned word embeddings.
+
+With eighty percent from A, we get eight, zero. With twenty percent from B, we get zero, two. Add them together and the attention output is eight, two.
+
+Notice that the weights were eighty percent and twenty percent, but the output is eight, two. Weights and output are different things. The values themselves have not been replaced.
+
+That output is information gathered for the position doing the looking. It continues through the rest of the Transformer block. It is not directly the next value vector, and it is not yet a generated word.
+
+==============================================================
+
+SLIDE 7: 7. The model learns the transformations
+
+You might ask where all these numbers come from. In our tiny examples we chose them. A real model learns transformations during training.
+
+It reads training examples and makes predictions. We measure how wrong those predictions are. An optimizer adjusts the learned weights, including the transformations that create queries, keys and values. This happens repeatedly across many examples.
+
+Once training is finished, using the model normally does not change those weights. A new sentence still produces different query, key and value vectors because the input representations are different.
+
+This is the distinction between a learned transformation and its result. The transformation is the rule the model learned. The query, key or value is what that rule calculates for this particular input.
+
+In a later layer, the input is already contextualized by earlier processing. That layer calculates fresh queries, keys and values from the updated representations.
+
+==============================================================
+
+SLIDE 8: 8. A text generator must not peek ahead
+
+When attention reads information from the same sequence, we call it self-attention. That name tells us where the information comes from.
+
+A model that is generating text needs an extra restriction. It must not see future tokens while learning to predict them. That restriction is called a causal mask.
+
+Suppose our context is I like. At the position like, the model may use I and like to predict what comes next. In this training example, coffee is the next token, so that position must not read coffee first.
+
+The current token is allowed. The future target is not. The mask makes the attention weights for future positions zero.
+
+An encoder can usually read both sides of an input sentence, because it is representing a supplied input rather than pretending the later input words have not arrived. The permitted information depends on the job we are asking the model to do.
+
+==============================================================
+
+SLIDE 9: 9. Encoder reads. Decoder writes.
+
+An encoder reads an input and builds useful representations of it. A decoder produces an output token by token.
+
+For example, imagine translating I love cats into French. The encoder processes the English input. The decoder begins producing the French output. At each step, it can use the output tokens already available and consult the encoder representations.
+
+That consultation is called cross-attention. Cross means the information comes from a different sequence: decoder queries read encoder keys and values.
+
+The decoder is not just copying the encoder. It is choosing the next output token using what it has already generated and the information it reads from the input. The output length can differ from the input length.
+
+These roles are not unique to Transformers. Earlier recurrent translation models also used encoders and decoders. Attention changes how information can be accessed between them.
+
+==============================================================
+
+SLIDE 10: 10. A Transformer combines a few jobs
+
+A Transformer is the whole network, not just the attention calculation.
+
+Position information makes order available. That helps distinguish dog bites man from man bites dog.
+
+Multi-head attention means the model calculates several learned information mixtures in parallel, then combines them. It is not one fixed head for grammar and another fixed head for meaning.
+
+The feed-forward network transforms the features at each position. Unlike attention, this component does not mix positions with each other.
+
+A residual connection adds the input representation back to an update. A tiny example is old vector two, one plus update zero, three, giving two, four.
+
+Normalization rescales features to help regulate their magnitudes. Its numerical details are not important for our story today.
+
+These pieces form a block, and blocks are stacked. The output of one block becomes the input representation for the next.
+
+==============================================================
+
+SLIDE 11: 11. GPT predicts one more token, then repeats
+
+After the final block, the model still has numerical representations, not a finished word. A vocabulary projection turns a representation into scores for possible next tokens. Softmax turns those scores into probabilities.
+
+The model or decoding method chooses a token, appends it to the context, and predicts again. Our small example starts with I like. Suppose the chosen next token is coffee. The new context becomes I like coffee. The following prediction might be a full stop.
+
+Those choices are illustrative, not captured output from a real model. A token may be part of a word rather than a whole word.
+
+GPT-like models use decoder-only blocks. They do not need a separate encoder or encoder cross-attention. BERT-like models use an encoder-style arrangement to build input representations.
+
+The final reminder is that a plausible continuation is not necessarily a true statement. Predicting text is not the same as checking facts.
+
+==============================================================
+
+SLIDE 12: 12. The whole idea in three sentences
+
+Let me finish with three sentences.
+
+Queries and keys decide how strongly positions match.
+
+Attention weights use those matches to blend values into an output vector.
+
+A Transformer processes that vector through its blocks to build representations that can support tasks such as generating text.
+
+That is the main story. We do not need to assign an English meaning to every vector component to understand the information flow.
+
+Let us check the distinction together. Which part is the mixing amount: the weight or the value? The weight. Which part supplies the information being mixed? The value. Is the attention output already a generated word? No, it is an internal vector.
+
+And why does a text generator hide future tokens? Because it must predict the next token from the available context, not read the answer first.
+
+What would you like to go through again?

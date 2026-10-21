@@ -26,6 +26,14 @@ DataScienceWorkshop/
 
 ## Session 3: From LSTMs to Transformers (60 minutes)
 
+**Start here for the plain-language presentation:**
+[Attention, in Plain English](presentations/Attention_Explained_Plainly.pptx).
+Each of its 12 slides explains a term and shows a small example. The
+[read-aloud script](presentations/Attention_Read_Aloud_Script.txt) contains only
+the words to speak, organized by slide, without presenter instructions.
+[PDF version](presentations/Attention_Explained_Plainly.pdf).
+Use the examples and audience questions for a session of up to 30 minutes.
+
 **Shorter, slide-only version:** [Attention & Transformers: The Simple Version](presentations/Attention_and_Transformers_Simple_30min.pptx)
 is a 12-slide, 30-minute introduction including questions. Every slide has speaker
 notes and a time budget; no live code is required. A
