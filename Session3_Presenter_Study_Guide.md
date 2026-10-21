@@ -249,8 +249,42 @@ information available to cross-attention in **each** decoder block.
 
 **Do not say GPT is this whole picture.** GPT-style decoder-only models have no
 separate encoder or encoder cross-attention. BERT-like models use the encoder side.
-The diagram below zooms into the decoder-only arrangement used by our live demo.
-Keep this overview to a minute inside the existing 35-45 minute slot.
+The later decoder-only diagram shows the arrangement used by our live demo.
+Keep this simple overview to a minute inside the existing 35-45 minute slot.
+
+### Then add one level of architectural detail
+
+![Detailed encoder-decoder architecture](assets/transformers/08_transformer_detailed.png)
+
+Use another 1-2 minutes for this picture, not a new lecture. Point at only:
+
+1. **Multi-head attention:** multiple learned projections run in parallel; their
+   outputs are concatenated and projected. The masked decoder version sets future
+   scores to negative infinity before softmax.
+2. **Side arrows:** a residual path carries the input around a sublayer.
+   **Add & Norm** here means `LayerNorm(x + Sublayer(x))`, with `x` being that
+   sublayer's input. Layer normalization operates over features at each position;
+   it is not the attention softmax.
+3. **Cross-attention:** decoder features provide Q; the encoder's final output
+   states provide K and V to each decoder block. The feed-forward network that
+   follows processes features independently at each position.
+
+**Say this:**
+
+> "This is the same map with the missing pieces restored. Attention has multiple
+> heads, each sublayer has a bypass path, and Add & Norm combines the old
+> representation with the update before normalizing it."
+
+This diagram uses the original **post-norm** encoder-decoder layout: normalize
+after the residual addition. The next GPT-2-style diagram is **pre-norm**:
+normalize the sublayer input first, then add the residual. They are different
+architectural variants, not contradictory descriptions of the same model.
+Dropout and other implementation details are omitted.
+
+Do not derive either layout during class. The simple-plus-detailed walkthrough
+takes **2-3 minutes total**, replacing architecture explanation already in the
+35-45 minute slot. The decoder-only diagram is then a quick comparison, leaving
+time to run the causal-mask experiment.
 
 ### Then zoom into a decoder-only block
 
@@ -417,7 +451,7 @@ teach caching, sampling, temperature, or fine-tuning today.
    that Jupyter uses.
 2. Restart the kernel and run all cells. Confirm three live heatmaps, a top-five
    candidate list, and token-by-token generation appear.
-3. Confirm all seven static diagrams display. Keep the repository folder structure;
+3. Confirm all eight static diagrams display. Keep the repository folder structure;
    copying only the notebook loses its relative image files.
 4. Save the executed notebook locally before presenting. You then have actual
    outputs to discuss if a live run fails. Do not present example numbers as if

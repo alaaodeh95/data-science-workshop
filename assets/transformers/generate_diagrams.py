@@ -111,6 +111,22 @@ class Diagram:
             "files": {},
         }, indent=2) + "\n", encoding="utf-8")
 
+    def route(self, points, color="gray"):
+        stroke = COLORS[color][0]
+        xs, ys = zip(*points)
+        self.ax.plot(xs[:-1], ys[:-1], color=stroke, linewidth=1.3)
+        self.ax.add_patch(FancyArrowPatch(
+            points[-2], points[-1], arrowstyle="-|>", mutation_scale=13,
+            linewidth=1.3, color=stroke,
+        ))
+        x, y = points[0]
+        self.element(
+            "arrow", x=x, y=y, width=max(xs)-min(xs), height=max(ys)-min(ys),
+            points=[[px-x, py-y] for px, py in points], strokeColor=stroke,
+            startArrowhead=None, endArrowhead="arrow",
+            startBinding=None, endBinding=None,
+        )
+
 
 def recurrence():
     d = Diagram("01_recurrence", "From passing a memory to looking things up",
@@ -281,7 +297,69 @@ def architecture():
     )
 
 
+def detailed_architecture():
+    d = Diagram(
+        "08_transformer_detailed", "Inside the Transformer: the next level of detail",
+        "Original encoder-decoder, post-normalization layout. Read top to bottom; side arrows are residual paths.",
+        height=1230,
+    )
+    for x, label in [(105, "Input tokens"), (775, "Shifted / earlier output tokens")]:
+        d.box(x, 135, 330, 50, label, "blue", size=18)
+        d.arrow(x + 165, 185, x + 165, 215)
+        d.box(x, 215, 330, 75, "Token embeddings\n+ positional encoding", "blue")
+        d.arrow(x + 165, 290, x + 165, 310)
+
+    d.box(45, 310, 420, 690, "", "green", container=True)
+    d.text(105, 320, "ENCODER BLOCK  x N", size=20, bold=True)
+    d.box(105, 365, 330, 90,
+          "Multi-head self-attention\nParallel heads -> concat + project\nQ, K, V: encoder features", "green", size=17)
+    d.arrow(270, 350, 270, 365)
+    d.arrow(270, 455, 270, 485)
+    d.box(105, 485, 330, 50, "Add & Norm", "orange")
+    d.route([(270, 350), (75, 350), (75, 510), (105, 510)])
+    d.arrow(270, 535, 270, 755)
+    d.box(105, 755, 330, 70, "Feed-forward network\nSame MLP at each position", "green", size=18)
+    d.arrow(270, 825, 270, 855)
+    d.box(105, 855, 330, 50, "Add & Norm", "orange")
+    d.route([(270, 735), (75, 735), (75, 880), (105, 880)])
+    d.arrow(270, 905, 270, 1040)
+    d.box(105, 1040, 330, 60, "Encoder output states", "green")
+
+    d.box(715, 310, 440, 690, "", "purple", container=True)
+    d.text(775, 320, "DECODER BLOCK  x N", size=20, bold=True)
+    d.box(775, 365, 330, 90,
+          "Masked multi-head self-attention\nFuture scores -> -infinity\nQ, K, V: decoder features", "purple", size=17)
+    d.arrow(940, 350, 940, 365)
+    d.arrow(940, 455, 940, 485)
+    d.box(775, 485, 330, 50, "Add & Norm", "orange")
+    d.route([(940, 350), (1140, 350), (1140, 510), (1105, 510)])
+    d.arrow(940, 535, 940, 585)
+    d.text(960, 550, "Q", size=17)
+    d.box(775, 585, 330, 90,
+          "Multi-head cross-attention\nQ: decoder features\nK, V: encoder output states", "purple", size=18)
+    d.arrow(940, 675, 940, 715)
+    d.box(775, 715, 330, 50, "Add & Norm", "orange")
+    d.route([(940, 565), (1140, 565), (1140, 740), (1105, 740)])
+    d.arrow(940, 765, 940, 815)
+    d.box(775, 815, 330, 70, "Feed-forward network\nSame MLP at each position", "purple", size=18)
+    d.arrow(940, 885, 940, 925)
+    d.box(775, 925, 330, 50, "Add & Norm", "orange")
+    d.route([(940, 795), (1140, 795), (1140, 950), (1105, 950)])
+    d.arrow(940, 975, 940, 1040)
+    d.box(775, 1040, 330, 60, "Linear -> softmax\nNext-token probabilities", "blue", size=18)
+
+    d.arrow(435, 1070, 775, 630, "green")
+    d.text(490, 740, "Encoder memory\nsupplies K and V\nto every decoder block", size=16)
+    d.save(
+        "Add & Norm = LayerNorm(x + Sublayer(x)); residual arrows carry x.\n"
+        "This is post-norm. The GPT-2 demo uses pre-norm, decoder-only blocks without cross-attention."
+    )
+
+
 if __name__ == "__main__":
-    for build in [recurrence, encoder_decoder, qkv, mask, block, generation, architecture]:
+    for build in [
+        recurrence, encoder_decoder, qkv, mask, block, generation,
+        architecture, detailed_architecture,
+    ]:
         build()
-    print(f"Generated seven original diagrams in {OUT}")
+    print(f"Generated eight original diagrams in {OUT}")

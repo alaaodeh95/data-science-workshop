@@ -34,8 +34,10 @@ it does not depend on Sessions 1 or 2. No GPU or training is required.
 [presenter study guide](Session3_Presenter_Study_Guide.md): a 35-minute study route,
 plain-language explanations, worked attention calculations, a talk track, expected
 demo behavior, and answers to likely questions. The participant notebook includes
-seven original diagrams that display before any code is run, including a simple
-side-by-side encoder-decoder Transformer component map. Keep the `assets/`
+eight original diagrams that display before any code is run, including a simple
+side-by-side encoder-decoder Transformer component map followed by a more detailed
+version with residual paths and Add & Norm. The two-image walkthrough takes 2-3
+minutes within the existing hour. Keep the `assets/`
 folder alongside it when downloading.
 
 | Minutes | Activity |
