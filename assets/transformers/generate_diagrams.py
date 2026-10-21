@@ -21,12 +21,13 @@ COLORS = {
 
 
 class Diagram:
-    def __init__(self, name, title, subtitle):
+    def __init__(self, name, title, subtitle, height=660):
         self.name = name
+        self.height = height
         self.elements = []
-        self.fig, self.ax = plt.subplots(figsize=(12, 6.6), dpi=160)
+        self.fig, self.ax = plt.subplots(figsize=(12, height / 100), dpi=160)
         self.fig.subplots_adjust(left=0, right=1, bottom=0, top=1)
-        self.ax.set(xlim=(0, 1200), ylim=(660, 0))
+        self.ax.set(xlim=(0, 1200), ylim=(height, 0))
         self.ax.axis("off")
         self.text(45, 30, title, size=29, bold=True)
         self.text(45, 80, subtitle, size=17)
@@ -100,7 +101,7 @@ class Diagram:
         )
 
     def save(self, takeaway):
-        self.box(45, 565, 1110, 65, takeaway, "gray", size=19)
+        self.box(45, self.height - 95, 1110, 65, takeaway, "gray", size=19)
         self.fig.savefig(OUT / f"{self.name}.png", facecolor="white")
         self.fig.savefig(OUT / f"{self.name}.svg", facecolor="white")
         plt.close(self.fig)
@@ -242,7 +243,45 @@ def generation():
     d.save("Training can score many positions in parallel; new text is still generated token by token.")
 
 
+def architecture():
+    d = Diagram(
+        "07_transformer_architecture", "Transformer architecture: the simple component map",
+        "Read top to bottom. This is an encoder-decoder Transformer, not a decoder-only GPT model.",
+        height=900,
+    )
+    d.box(75, 140, 380, 80, "Input tokens\nEmbeddings + position", "blue")
+    d.box(745, 140, 380, 80, "Earlier output tokens\nEmbeddings + position", "blue")
+    d.arrow(265, 220, 265, 260)
+    d.arrow(935, 220, 935, 260)
+
+    d.box(55, 260, 420, 400, "", "green", container=True)
+    d.text(80, 275, "ENCODER BLOCK  x N", size=21, bold=True)
+    d.box(75, 315, 380, 80, "Multi-head self-attention\nRead all input positions", "green")
+    d.arrow(265, 395, 265, 535)
+    d.box(75, 535, 380, 80, "Feed-forward network\nTransform each position", "green")
+    d.arrow(265, 615, 265, 710)
+    d.box(75, 710, 380, 65, "Encoder output states", "green")
+
+    d.box(725, 260, 420, 400, "", "purple", container=True)
+    d.text(750, 275, "DECODER BLOCK  x N", size=21, bold=True)
+    d.box(745, 315, 380, 80, "Masked multi-head self-attention\nRead current + earlier output", "purple", size=18)
+    d.arrow(935, 395, 935, 425)
+    d.text(955, 400, "Q", size=16)
+    d.box(745, 425, 380, 80, "Multi-head cross-attention\nRead encoder output states", "orange")
+    d.arrow(935, 505, 935, 535)
+    d.box(745, 535, 380, 80, "Feed-forward network\nTransform each position", "purple")
+    d.arrow(935, 615, 935, 710)
+    d.box(745, 710, 380, 65, "Linear + softmax\nNext-token probabilities", "blue", size=18)
+
+    d.arrow(455, 742, 745, 465, "orange")
+    d.text(500, 450, "Encoder states\nsupply K and V", size=17)
+    d.save(
+        "Residual connections + normalization surround each sublayer (omitted here).\n"
+        "N means repeat the block. Exact normalization placement varies by architecture."
+    )
+
+
 if __name__ == "__main__":
-    for build in [recurrence, encoder_decoder, qkv, mask, block, generation]:
+    for build in [recurrence, encoder_decoder, qkv, mask, block, generation, architecture]:
         build()
-    print(f"Generated six original diagrams in {OUT}")
+    print(f"Generated seven original diagrams in {OUT}")

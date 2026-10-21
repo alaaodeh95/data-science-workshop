@@ -217,6 +217,43 @@ and how do we stop a text generator from peeking ahead?"
 
 ## 4. Transformer blocks and the mask [teach at 35-45 minutes]
 
+### First show the simple encoder-decoder component map
+
+![Encoder-decoder Transformer component map](assets/transformers/07_transformer_architecture.png)
+
+Walk down the left side, then the right side, then follow the connecting arrow:
+
+1. **Encoder input:** convert input tokens into embeddings and include position.
+2. **Encoder self-attention:** each input position can read other input positions.
+3. **Encoder feed-forward network:** transform the mixed features at each position.
+   Repeat the block N times to produce encoder output states.
+4. **Decoder input:** embed the output tokens available so far and include position.
+   During training, these are shifted target tokens; generation starts with a
+   start token and continues with generated tokens.
+5. **Masked decoder self-attention:** read only current and earlier output positions.
+6. **Cross-attention:** decoder features supply queries; encoder output states supply
+   keys and values. This is the connection between the two sides.
+7. **Decoder feed-forward network:** transform each position's features. Repeat the
+   decoder block N times, then use a linear vocabulary projection and softmax to
+   obtain next-token probabilities.
+
+**Say this in about one minute:**
+
+> "The left side reads the input. The right side generates the output. The
+> decoder first looks at what it has already written, then consults the encoder's
+> input representations. That middle connection is cross-attention."
+
+Residual connections and normalization belong around the sublayers but are
+intentionally omitted from this map. The output-state arrow represents encoder
+information available to cross-attention in **each** decoder block.
+
+**Do not say GPT is this whole picture.** GPT-style decoder-only models have no
+separate encoder or encoder cross-attention. BERT-like models use the encoder side.
+The diagram below zooms into the decoder-only arrangement used by our live demo.
+Keep this overview to a minute inside the existing 35-45 minute slot.
+
+### Then zoom into a decoder-only block
+
 ![Decoder-only architecture](assets/transformers/05_decoder_block.png)
 
 **Understand it yourself.** A token ID selects an embedding vector. Positional
@@ -380,7 +417,7 @@ teach caching, sampling, temperature, or fine-tuning today.
    that Jupyter uses.
 2. Restart the kernel and run all cells. Confirm three live heatmaps, a top-five
    candidate list, and token-by-token generation appear.
-3. Confirm all six static diagrams display. Keep the repository folder structure;
+3. Confirm all seven static diagrams display. Keep the repository folder structure;
    copying only the notebook loses its relative image files.
 4. Save the executed notebook locally before presenting. You then have actual
    outputs to discuss if a live run fails. Do not present example numbers as if
