@@ -102,6 +102,13 @@ generation diagram explicitly uses illustrative probabilities. To regenerate the
 images with the Session 3 dependencies installed:
 `python assets\transformers\generate_diagrams.py`.
 
+**Dense wiring poster:** [Full Transformer wiring image](assets/transformers/09_transformer_wiring.png)
+is a separate 5120-by-4000 PNG with 24 expanded attention heads, Q/K/V projections,
+masking, residual routes, feed-forward networks, and output/training references.
+It illustrates one original-style encoder-decoder design, not every Transformer
+variant. SVG and editable Excalidraw versions are alongside it. Regenerate with
+`python assets\transformers\generate_wired_transformer.py`.
+
 ## ⚙️ Setup (participants)
 You need **Python 3.10+** (https://www.python.org/downloads/; on Windows, tick **"Add python.exe to PATH"**) and **Git** (https://git-scm.com/downloads).
 
