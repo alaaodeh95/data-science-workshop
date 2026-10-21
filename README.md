@@ -30,6 +30,13 @@ Open [`Session3_From_LSTMs_to_Transformers.ipynb`](Session3_From_LSTMs_to_Transf
 This standalone session assumes basic Python and a previous introduction to RNNs/LSTMs;
 it does not depend on Sessions 1 or 2. No GPU or training is required.
 
+**Preparing to present?** Start with the
+[presenter study guide](Session3_Presenter_Study_Guide.md): a 35-minute study route,
+plain-language explanations, worked attention calculations, a talk track, expected
+demo behavior, and answers to likely questions. The participant notebook includes
+six original diagrams that display before any code is run. Keep the `assets/`
+folder alongside it when downloading.
+
 | Minutes | Activity |
 |---|---|
 | 0-5 | Bridge from LSTMs |
@@ -68,6 +75,13 @@ experiments. Change the query, inspect the self-attention heatmap, hide future
 positions, and change a real model's prompt. Hand-crafted attention vectors are
 explicitly distinguished from learned model behavior. If behind schedule, keep
 one prompt and omit the second prompt experiment; preserve the final recap.
+
+**Diagram sources:** `assets/transformers/` contains PNGs used in the notebook,
+scalable SVGs, and editable Excalidraw sources. All illustrations were created for
+this workshop; the numerical attention diagram matches Experiment A, while the
+generation diagram explicitly uses illustrative probabilities. To regenerate the
+images with the Session 3 dependencies installed:
+`python assets\transformers\generate_diagrams.py`.
 
 ## ⚙️ Setup (participants)
 You need **Python 3.10+** (https://www.python.org/downloads/; on Windows, tick **"Add python.exe to PATH"**) and **Git** (https://git-scm.com/downloads).
